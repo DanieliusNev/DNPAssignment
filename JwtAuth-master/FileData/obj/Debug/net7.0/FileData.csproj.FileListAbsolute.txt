@@ -1,0 +1,17 @@
+C:\Users\danie\Downloads\JwtAuth-master (1)\JwtAuth-master\FileData\bin\Debug\net7.0\FileData.deps.json
+C:\Users\danie\Downloads\JwtAuth-master (1)\JwtAuth-master\FileData\bin\Debug\net7.0\FileData.dll
+C:\Users\danie\Downloads\JwtAuth-master (1)\JwtAuth-master\FileData\bin\Debug\net7.0\FileData.pdb
+C:\Users\danie\Downloads\JwtAuth-master (1)\JwtAuth-master\FileData\bin\Debug\net7.0\Application.dll
+C:\Users\danie\Downloads\JwtAuth-master (1)\JwtAuth-master\FileData\bin\Debug\net7.0\Shared.dll
+C:\Users\danie\Downloads\JwtAuth-master (1)\JwtAuth-master\FileData\bin\Debug\net7.0\Application.pdb
+C:\Users\danie\Downloads\JwtAuth-master (1)\JwtAuth-master\FileData\bin\Debug\net7.0\Shared.pdb
+C:\Users\danie\Downloads\JwtAuth-master (1)\JwtAuth-master\FileData\obj\Debug\net7.0\FileData.csproj.AssemblyReference.cache
+C:\Users\danie\Downloads\JwtAuth-master (1)\JwtAuth-master\FileData\obj\Debug\net7.0\FileData.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\danie\Downloads\JwtAuth-master (1)\JwtAuth-master\FileData\obj\Debug\net7.0\FileData.AssemblyInfoInputs.cache
+C:\Users\danie\Downloads\JwtAuth-master (1)\JwtAuth-master\FileData\obj\Debug\net7.0\FileData.AssemblyInfo.cs
+C:\Users\danie\Downloads\JwtAuth-master (1)\JwtAuth-master\FileData\obj\Debug\net7.0\FileData.csproj.CoreCompileInputs.cache
+C:\Users\danie\Downloads\JwtAuth-master (1)\JwtAuth-master\FileData\obj\Debug\net7.0\FileData.csproj.CopyComplete
+C:\Users\danie\Downloads\JwtAuth-master (1)\JwtAuth-master\FileData\obj\Debug\net7.0\FileData.dll
+C:\Users\danie\Downloads\JwtAuth-master (1)\JwtAuth-master\FileData\obj\Debug\net7.0\refint\FileData.dll
+C:\Users\danie\Downloads\JwtAuth-master (1)\JwtAuth-master\FileData\obj\Debug\net7.0\FileData.pdb
+C:\Users\danie\Downloads\JwtAuth-master (1)\JwtAuth-master\FileData\obj\Debug\net7.0\ref\FileData.dll

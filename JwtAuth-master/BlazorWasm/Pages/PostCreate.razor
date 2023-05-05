@@ -1,0 +1,140 @@
+@page "/PostCreate"
+@attribute [Authorize]
+@using BlazorWasm.Services
+@using global::Shared.Models
+@using System.Web
+@using System.Security.Claims
+@using System.Xml
+@using global::Shared.Dtos
+
+@inject IPostService postService
+@inject NavigationManager navMgr
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<AuthorizeView>
+    <Authorized>
+        <div class="postcard">
+            <h3>New Post:</h3>
+            <div class="field">
+                <label>Post Title:</label>
+                <input type="text" @bind="title" />
+            </div>
+            <div class="field">
+                <label>Text of the post:</label>
+                <input class="postTextField" type="text" @bind="text" />
+            </div>
+            @if (!string.IsNullOrEmpty(errorLabel))
+            {
+                <div class="field">
+                    <label class="error-label">
+                        @errorLabel
+                    </label>
+                </div>
+            }
+            <div class="field">
+                <button class="create-post-btn" @onclick="CreatePost">Create post</button>
+            </div>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <h1 class="not-authorized-msg">Need to login to create a post</h1>
+    </NotAuthorized>
+</AuthorizeView>
+
+<style>
+    .postcard {
+        background-color: #fff;
+        border-radius: 5px;
+        padding: 20px;
+        width: 500px;
+        margin: 0 auto;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .field {
+        margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    label {
+        font-size: 18px;
+        margin-bottom: 5px;
+        color: #333;
+    }
+
+    input[type="text"] {
+        font-size: 18px;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        width: 100%;
+    }
+
+    .postTextField {
+        height: 150px;
+        resize: none;
+    }
+
+    .create-post-btn {
+        font-size: 18px;
+        padding: 10px 20px;
+        background-color: #2196F3;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .error-label {
+        color: red;
+        font-size: 18px;
+        margin-top: 10px;
+    }
+
+    .not-authorized-msg {
+        text-align: center;
+    }
+</style>
+
+
+
+@code
+{
+    private string title;
+    private string text;
+    private string authorname;
+    private ClaimsPrincipal user = new();
+    private string errorLabel;
+    private int userId;
+    
+    
+    private async Task CreatePost()
+    {
+        errorLabel = "";
+        try
+        {
+            /*var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authenticationState.User;
+            authorname = user.Identity.Name;
+            UserBasicDto thisUser = await authService.GetUserByName(authorname);
+            if (thisUser == null)
+            {
+                throw new Exception("User not found.");
+            }*/
+            var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authenticationState.User;
+            var userIdStr = user.Claims.First(claim => claim.Type.Equals("ID")).Value;
+            var userId = int.Parse(userIdStr);
+
+            PostCreationDto dto = new(userId, title, text);
+            await postService.CreatePostAsync(dto);
+            navMgr.NavigateTo("/");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            errorLabel = $"Error: {e.Message}";
+        }
+    }
+}

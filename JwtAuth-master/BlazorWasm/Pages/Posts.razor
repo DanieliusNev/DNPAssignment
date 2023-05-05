@@ -1,0 +1,132 @@
+@page "/Posts"
+
+@using BlazorWasm.Services
+@using global::Shared.Models
+@inject IPostService postService
+@inject NavigationManager navMgr
+
+    <h3>Posts</h3>
+
+    <div class="row justify-content-center">
+        <div class="col-2" align="center">
+            <button class="custom-btn2" @onclick="LoadPosts">Load Posts</button>
+        </div>
+    </div>
+    @if (posts == null)
+    {
+    }
+    else if (!posts.Any())
+    {
+        <p>No Posts to display</p>
+    }
+    else
+    {
+        <div class="row justify-content-center">
+        <div class="col-10">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th class="text-center">Author</th>
+                    <th class="text-center">Title</th>
+                    <th class="text-center"></th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in posts)
+                {
+                    <tr>
+                        <td class="text-center">@item.Author.Username</td>
+                        <td class="text-center">@item.Title</td>
+                        @*<td>@item.Text</td>*@
+                        <td class="text-center">
+                            <button class="custom-btn" @onclick="@(() => navMgr.NavigateTo($"/Post/{item.PostId}"))">View details</button>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(msg))
+    {
+        <label style="color: red">@msg</label>
+    }
+<style>
+    h3 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+
+    .custom-btn {
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+        border-radius: 0.25rem;
+        border: none;
+        background-color: #007bff;
+        color: #fff;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    .custom-btn2 {
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+            margin-bottom: 2rem;
+        }
+
+    .custom-btn:hover {
+        background-color: #0069d9;
+    }
+
+    .custom-btn:active {
+        background-color: #005cbf;
+    }
+
+    .table {
+        width: 100%;
+        margin-bottom: 1rem;
+        color: #212529;
+        border-collapse: collapse;
+    }
+
+    .table th,
+    .table td {
+        padding: 0.75rem;
+        vertical-align: middle;
+        border-top: 1px solid #dee2e6;
+    }
+
+    .table thead th {
+        vertical-align: middle;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .table tbody+tbody {
+        border-top: 2px solid #dee2e6;
+    }
+</style>
+
+@code {
+    private IEnumerable<Post>? posts;
+    private string msg = "";
+
+    private async Task LoadPosts()
+    {
+        try
+        {
+            posts = await postService.GetAsync(null, null, null, null);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            msg = e.Message;
+        }
+    }
+}

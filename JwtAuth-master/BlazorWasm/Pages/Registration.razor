@@ -1,0 +1,164 @@
+@page "/Registration"
+@using BlazorWasm.Services
+@using global::Shared.Dtos
+@using global::Shared.Models
+@inject IAuthService authService
+@inject NavigationManager navMgr
+
+<AuthorizeView>
+    <NotAuthorized>
+        <div class="card">
+            <h3 class="text-center">Registration</h3>
+            <div class="field">
+                <label>User name:</label>
+                <input type="text" @bind="userName"/>
+            </div>
+            <div class="field">
+                <label>Email:</label>
+                <input type="text" @bind="email"/>
+            </div>
+            <div class="field">
+                <label>Role:</label>
+                <input type="text" @bind="role"/>
+            </div>
+            <div class="field">
+                <label style="text-align: center">Password:</label>
+                <input type="password" @bind="passSec"/>
+            </div>
+            <div class="field">
+                <label style="text-align: center">Password Again:</label>
+                <input type="password" @bind="password"/>                                       
+            </div>
+            @if (!string.IsNullOrEmpty(errorLabel))
+            {
+                <div class="field">
+                    <label style="color: red">
+                        @errorLabel
+                    </label>
+                </div>
+            }
+            else
+            {
+                <div class="field">
+                    <label style="color: #03c203">
+                        @successLabel
+                    </label>
+                </div>
+            }
+            <div class="field">
+                <button class="loginbtn" @onclick="RegisterAsync">Registration</button>
+            </div>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+<style>
+    .card {
+        background-color: #f7f7f7;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0,0,0,.2);
+        padding: 20px;
+        width: 400px;
+        margin: 50px auto;
+    }
+
+    .field {
+        margin-bottom: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .field label {
+        font-size: 18px;
+        margin-bottom: 10px;
+        text-align: center;
+        font-weight: bold;
+        width: 100%;
+    }
+
+    .field input[type="text"],
+    .field input[type="password"] {
+        font-size: 16px;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,.2);
+        width: 100%;
+    }
+
+    .loginbtn {
+        font-size: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+            margin-bottom: 2rem;
+            margin-top: 2rem;
+    }
+
+    .loginbtn:hover {
+        transform: scale(1.1);
+            background-color: #0069d9;
+    }
+
+    .field label[style="color: red"] {
+        color: red;
+    }
+
+    .field label[style="color: #03c203"] {
+        color: #03c203;
+    }
+</style>
+@code {
+    private string userName;
+    private string password;
+    private string email;
+    private string domain;
+    private string name;
+    private string role;
+    private string passSec;
+    private string errorLabel;
+    private string successLabel;
+
+    private async Task RegisterAsync()
+    {
+        errorLabel = "";
+        try
+        {
+            User regUser = new User();
+            regUser.Username = userName;
+            regUser.Email = email;
+            regUser.Domain = "VIA";
+            regUser.Name = "name";
+            regUser.Role = role;
+            if (passSec.Equals(password))
+            {
+                regUser.Password = password;
+                Console.Out.WriteLine(regUser.Email);
+                Console.Out.WriteLine(regUser.Name);
+                Console.Out.WriteLine(regUser.Username);
+                Console.Out.WriteLine(regUser.Role);
+            }
+            else
+            {
+                throw new Exception("Passwords are not the same!");
+            }
+            
+            await authService.RegisterAsync(regUser);
+            successLabel = $"email: {regUser.Email}! role: {regUser.Role}! domain: {regUser.Domain}! Registration was successful {userName}!";
+            /*successLabel = $"Registration was successful {userName}!";*/
+            //navMgr.NavigateTo("/Login");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            errorLabel = $"Error: {e.Message}";
+        }
+        
+    }
+}

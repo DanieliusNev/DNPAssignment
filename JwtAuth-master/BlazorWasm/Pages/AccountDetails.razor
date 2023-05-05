@@ -1,0 +1,199 @@
+﻿@page "/ShowCredentials1"
+@using System.Security.Claims
+@using BlazorWasm.Services
+@using global::Shared.Models
+
+@inject IPostService postService
+@inject NavigationManager navMgr
+@inject AuthenticationStateProvider AuthenticationStateProvider
+<AuthorizeView>
+    <Authorized>
+        <div class="account-details">
+            <h1>Account Details</h1>
+            <h3>Username: @context.User.Identity.Name</h3>
+            <p>Password: @context.User.Claims.First(claim => claim.Type.Equals("Password")).Value</p>
+            <p>Email: @context.User.Claims.First(claim => claim.Type.Equals("Email")).Value</p>
+        </div>
+        
+        <div class="row justify-content-center">
+            <div class="col-2" align="center">
+                <button class="custom-btn" @onclick="LoadPosts">Your Posts</button>
+            </div>
+        </div>
+        @if (posts == null)
+            {
+            }
+            else if (!posts.Any())
+            {
+                <p>No Posts to display</p>
+            }
+            else
+            {
+                <div class="row justify-content-center">
+                    <div class="col-10">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th class="text-center">Author</th>
+                                <th class="text-center">Title</th>
+                                <th class="text-center">Delete?</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var item in posts)
+                            {
+                                <tr>
+                                    <td class="text-center">@item.Author.Username</td>
+                                    <td class="text-center">@item.Title</td>
+                                    @*<td>@item.Text</td>*@
+                                    <td>
+                                        <label @onclick="@(() => RemovePost(item.PostId))" style="cursor:pointer; color: red; font-weight: bold">
+                                            &#x2717;
+                                        </label>
+                                    </td>
+                                    
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        
+        @*<p>
+            Your claims include:
+            <ol>
+                @foreach (Claim claim in context.User.Claims)
+                {
+                    <li>
+                        <label>@claim.Type: @claim.Value</label>
+                    </li>
+                }
+            </ol>
+        </p>*@
+    </Authorized>
+    <NotAuthorized>
+        <p>You are not logged in.</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+@*<AuthorizeView Policy="MustBeVia">
+    <p>You are VIA</p>
+</AuthorizeView>*@
+
+@* For some reason css sheets don't work, so I just put the style here *@
+<style>
+    .account-details {
+        background-color: #fff;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+        padding: 20px;
+        border-radius: 10px;
+        max-width: 800px;
+        margin: 0 auto;
+        margin-top: 50px;
+        text-align: center;
+    }
+    
+    .account-details h1 {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+    
+    .account-details h3 {
+        font-size: 1.2rem;
+        margin-bottom: 5px;
+    }
+    
+    .account-details p {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: #333;
+        margin-bottom: 10px;
+    }
+    .table {
+            width: 100%;
+            margin-bottom: 1rem;
+            color: #212529;
+            border-collapse: collapse;
+        }
+    
+        .table th,
+        .table td {
+            padding: 0.75rem;
+            vertical-align: middle;
+            border-top: 1px solid #dee2e6;
+        }
+    
+        .table thead th {
+            vertical-align: middle;
+            border-bottom: 2px solid #dee2e6;
+        }
+    
+        .table tbody+tbody {
+            border-top: 2px solid #dee2e6;
+        }
+            .custom-btn {
+                    font-size: 1rem;
+                    padding: 0.5rem 1rem;
+                    border-radius: 0.25rem;
+                    border: none;
+                    background-color: #007bff;
+                    color: #fff;
+                    cursor: pointer;
+                    transition: background-color 0.2s ease-in-out;
+                    margin-bottom: 2rem;
+                    margin-top: 2rem;
+                }
+        
+            .custom-btn:hover {
+                background-color: #0069d9;
+            }
+        
+            .custom-btn:active {
+                background-color: #005cbf;
+            }
+</style>
+@code {
+    private IEnumerable<Post>? posts;
+    private IEnumerable<Post>? allPosts;
+    private string msg = "";
+
+    private async Task LoadPosts()
+    {
+        try
+        {
+            var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authenticationState.User;
+            var userIdStr = user.Claims.First(claim => claim.Type.Equals("ID")).Value;
+            var userId = int.Parse(userIdStr);
+            /*posts = await postService.GetAsync(null, null, null, null);*/
+            allPosts = await postService.GetAsync(null, null, null, null);
+            posts = allPosts.Where(post => post.Author.Id == userId);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            msg = e.Message;
+        }
+    }
+
+    private async Task RemovePost(int postId)
+    {
+        msg = "";
+        try
+        {
+            await postService.DeleteAsync(postId);
+
+            var list = new List<Post>(posts!);
+            list.RemoveAll(todo => todo.PostId == postId);
+            posts = list.AsEnumerable();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            msg = e.Message;
+        }
+    }
+
+}

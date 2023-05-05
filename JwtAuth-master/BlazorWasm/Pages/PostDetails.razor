@@ -1,0 +1,76 @@
+﻿@page "/post/{id:int}"
+@using BlazorWasm.Services
+@using global::Shared.Dtos
+@using global::Shared.Models
+
+
+@if (postBasicDto == null)
+{
+    <p>Loading post details...</p>
+}
+else
+{
+    <div class="postcard">
+        <h2 class="post-title">@postBasicDto.Title</h2>
+        <p class="post-author">Author: @postBasicDto.OwnerName</p>
+        <div class="post-text">
+            <p>@postBasicDto.Text</p>
+        </div>
+        
+    </div>
+}
+
+<style>
+.postcard {
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 800px;
+    margin: 0 auto;
+    margin-top: 50px;
+    text-align: center;
+}
+
+.post-title {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.post-text {
+    background-color: #f2f2f2;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.post-text p {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: #333;
+    margin: 0;
+}
+
+.post-author {
+    font-size: 1rem;
+    color: #999;
+    margin-top: 20px;
+}
+</style>
+
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private PostBasicDto postBasicDto;
+
+    [Inject]
+    private IPostService postService { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        postBasicDto = await postService.GetByIdAsync(Id);
+    }
+}
